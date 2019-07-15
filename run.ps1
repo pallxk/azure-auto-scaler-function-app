@@ -17,31 +17,45 @@ $tenantId = $env:ServicePrincipalTenantId
 
 Connect-AzAccount -ServicePrincipal -Credential $credentials -Tenant $tenantId
 
-# Get metrics for the last 5 minutes
-$connectionCountMetric = Get-AzMetric -ResourceId $resourceId -MetricName "ConnectionCount" -TimeGrain 00:05:00 -StartTime (Get-Date).AddMinutes(-5) -AggregationType Maximum
-$maxConnectionCount = $connectionCountMetric.Timeseries.Data[0].Maximum
-
-# Calculate the target unit count
-$targetUnitCount = 1
-foreach ($unitCount in $unitCounts) {
-    $unitCountConnections = $unitCount * $connectionsPerUnit
-    $unitCountConnectionsThreshold = $unitCountConnections * $scaleThreshold
-    if ($unitCountConnectionsThreshold -gt $maxConnectionCount -or $unitCount -eq $unitCounts[$unitCounts.Count - 1]) {
-        $targetUnitCount = $unitCount
-        Break
-    }
-}
-
 # Get information about the current resource state
 $signalRResource = Get-AzResource -ResourceId $resourceId -Verbose
 $currentUnitCount = [int]$signalRResource.Sku.Capacity
 
-# See if we need to change the unit count
-if ($targetUnitCount -ne $currentUnitCount) {
-            
-    # Change the resource unit count
-    $signalRResource.Sku.Name = Standard_S1 # Ensure we are on the standard plan
-    $signalRResource.Sku.Capacity = $targetUnitCount
-    $signalRResource | Set-AzResource -Force
-    
+# Only scale if we are on the Standard_S1 plan
+if ($signalRResource.Sku.Name -eq "Standard_S1") {
+
+    # Get metrics for the last 5 minutes
+    $connectionCountMetric = Get-AzMetric -ResourceId $resourceId -MetricName "ConnectionCount" -TimeGrain 00:05:00 -StartTime (Get-Date).AddMinutes(-5) -AggregationType Maximum
+    $maxConnectionCount = $connectionCountMetric.Timeseries.Data[0].Maximum
+
+    # Calculate the target unit count
+    $targetUnitCount = 1
+    foreach ($unitCount in $unitCounts) {
+        $unitCountConnections = $unitCount * $connectionsPerUnit
+        $unitCountConnectionsThreshold = $unitCountConnections * $scaleThreshold
+        if ($unitCountConnectionsThreshold -gt $maxConnectionCount -or $unitCount -eq $unitCounts[$unitCounts.Count - 1]) {
+            $targetUnitCount = $unitCount
+            Break
+        }
+    }
+
+    # See if we need to change the unit count
+    if ($targetUnitCount -ne $currentUnitCount) {
+
+        Write-Host "Scaling to unit count: " $targetUnitCount
+                
+        # Change the resource unit count
+        $signalRResource.Sku.Capacity = $targetUnitCount
+        $signalRResource | Set-AzResource -Force
+        
+    } else {
+
+        Write-Host "Not scaling as resource is already at the optimum unit count: " $currentUnitCount
+
+    }
+
+} else {
+
+    Write-Host "Can't scale as the SignalR service is not on a scalable plan: " $signalRResource.Sku.Name
+
 }
