@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "powershell",
+    "ServicePrincipalClientId": "{YOUR_SERVICE_PRINCIPAL_CLIENT_ID}",
+    "ServicePrincipalKey": "{YOUR_SERVICE_PRINCIPAL_KEY}",
+    "ServicePrincipalTenantId": "{YOUR_SERVICE_PRINCIPAL_TENANT_ID}",
+    "SignalRResourceId": "{YOUR_SIGNALR_SERVICE_RESOURCE_ID}"
+  }
+}
