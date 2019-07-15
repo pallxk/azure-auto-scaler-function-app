@@ -56,6 +56,6 @@ if ($signalRResource.Sku.Name -eq "Standard_S1") {
 
 } else {
 
-    Write-Host "Can't scale as the SignalR service is not on a scalable plan: " $signalRResource.Sku.Name
+    Write-Host "Can't scale as resource is not on a scalable plan: " $signalRResource.Sku.Name
 
 }
