@@ -42,7 +42,7 @@ if ($signalRResource.Sku.Name -eq "Standard_S1") {
     # See if we need to change the unit count
     if ($targetUnitCount -ne $currentUnitCount) {
 
-        Write-Host "Scaling to unit count: " $targetUnitCount
+        Write-Host "Scaling resource to unit count: " $targetUnitCount
                 
         # Change the resource unit count
         $signalRResource.Sku.Capacity = $targetUnitCount
