@@ -16,6 +16,12 @@ if ($env:MSI_SECRET) {
     Connect-AzAccount -Identity
 }
 
+if ($env:ARM_CLIENT_ID -and $env:ARM_CLIENT_SECRET -and $env:ARM_TENANT_ID) {
+    $SecuredPassword = ConvertTo-SecureString $env:ARM_CLIENT_SECRET -AsPlainText -Force
+    $Credential = New-Object System.Management.Automation.PSCredential($env:ARM_CLIENT_ID, $SecuredPassword)
+    Connect-AzAccount -ServicePrincipal -Tenant $env:ARM_TENANT_ID -Credential $Credential
+}
+
 # Uncomment the next line to enable legacy AzureRm alias in Azure PowerShell.
 # Enable-AzureRmAlias
 

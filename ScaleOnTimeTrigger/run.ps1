@@ -8,15 +8,6 @@ $connectionsPerUnit = 1000          # Number of concurent connections you can ha
 $unitCounts = 1,2,5,10,20,50,100    # Supported SignalR Unit Counts
 $scaleThreshold = .95               # Percentage threshold at which to scale 
 
-# Authenticate the service principle
-$clientId = $env:ServicePrincipalClientId
-$key = $env:ServicePrincipalKey
-$securePassword = ConvertTo-SecureString $key -AsPlainText -Force
-$credentials = New-Object System.Management.Automation.PSCredential($clientId, $securePassword)
-$tenantId = $env:ServicePrincipalTenantId
-
-Connect-AzAccount -ServicePrincipal -Credential $credentials -Tenant $tenantId
-
 # Get information about the current resource state
 $signalRResource = Get-AzResource -ResourceId $resourceId -Verbose
 $currentUnitCount = [int]$signalRResource.Sku.Capacity
