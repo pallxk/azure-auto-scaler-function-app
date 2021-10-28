@@ -8,7 +8,7 @@ $resourceId = $env:SignalRResourceId
 
 $connectionsPerUnit = 1000          # Number of concurrent connections you can have per unit
 $unitCounts = 1,2,5,10,20,50,100    # Supported SignalR Unit Counts
-$scaleThreshold = .95               # Percentage threshold at which to scale
+$scaleThreshold = [double]($env:SignalRScaleThreshold ?? .95)  # Percentage threshold at which to scale
 
 # Get information about the current resource state
 $signalRResource = Get-AzResource -ResourceId $resourceId -Verbose

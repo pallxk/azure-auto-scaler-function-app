@@ -4,6 +4,7 @@
     "FUNCTIONS_WORKER_RUNTIME": "powershell",
     "FUNCTIONS_WORKER_RUNTIME_VERSION": "~7",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "SignalRResourceId": ""
+    "SignalRResourceId": "",
+    "SignalRScaleThreshold": ".95"
   }
 }
