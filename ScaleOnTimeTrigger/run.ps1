@@ -1,6 +1,8 @@
 # Input bindings
 param($Timer)
 
+$ErrorActionPreference = "Stop"
+
 # Variable definitions
 $resourceId = $env:SignalRResourceId
 
