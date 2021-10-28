@@ -25,11 +25,11 @@ $connectionCountMetric = Get-AzMetric -ResourceId $resourceId -MetricName "Conne
 $maxConnectionCount = $connectionCountMetric.Timeseries.Data[0].Maximum
 
 # Calculate the target unit count
-$targetUnitCount = 1
+$targetUnitCount = 100
 foreach ($unitCount in $unitCounts) {
     $unitCountConnections = $unitCount * $connectionsPerUnit
     $unitCountConnectionsThreshold = $unitCountConnections * $scaleThreshold
-    if ($unitCountConnectionsThreshold -gt $maxConnectionCount -or $unitCount -eq $unitCounts[$unitCounts.Count - 1]) {
+    if ($unitCountConnectionsThreshold -gt $maxConnectionCount) {
         $targetUnitCount = $unitCount
         Break
     }
