@@ -6,9 +6,9 @@ $ErrorActionPreference = "Stop"
 # Variable definitions
 $resourceId = $env:SignalRResourceId
 
-$connectionsPerUnit = 1000          # Number of concurent connections you can have per unit
+$connectionsPerUnit = 1000          # Number of concurrent connections you can have per unit
 $unitCounts = 1,2,5,10,20,50,100    # Supported SignalR Unit Counts
-$scaleThreshold = .95               # Percentage threshold at which to scale 
+$scaleThreshold = .95               # Percentage threshold at which to scale
 
 # Get information about the current resource state
 $signalRResource = Get-AzResource -ResourceId $resourceId -Verbose
@@ -37,15 +37,11 @@ foreach ($unitCount in $unitCounts) {
 
 # See if we need to change the unit count
 if ($targetUnitCount -ne $currentUnitCount) {
-
     Write-Host "Scaling resource to unit count: " $targetUnitCount
-            
+
     # Change the resource unit count
     $signalRResource.Sku.Capacity = $targetUnitCount
     $signalRResource | Set-AzResource -Force
-    
 } else {
-
     Write-Host "Not scaling as resource is already at the optimum unit count: " $currentUnitCount
-
 }
