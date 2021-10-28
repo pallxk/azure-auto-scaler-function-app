@@ -14,41 +14,38 @@ $scaleThreshold = .95               # Percentage threshold at which to scale
 $signalRResource = Get-AzResource -ResourceId $resourceId -Verbose
 $currentUnitCount = [int]$signalRResource.Sku.Capacity
 
-# Only scale if we are on the Standard_S1 plan
-if ($signalRResource.Sku.Name -eq "Standard_S1") {
+# Only scale if we are not on the Free Plan
+if ($signalRResource.Sku.Name.StartsWith("Free_")) {
+    Write-Host "Can't scale as resource is not on a scalable plan: " $signalRResource.Sku.Name
+    exit 1
+}
 
-    # Get metrics for the last 5 minutes
-    $connectionCountMetric = Get-AzMetric -ResourceId $resourceId -MetricName "ConnectionCount" -TimeGrain 00:05:00 -StartTime (Get-Date).AddMinutes(-5) -AggregationType Maximum
-    $maxConnectionCount = $connectionCountMetric.Timeseries.Data[0].Maximum
+# Get metrics for the last 5 minutes
+$connectionCountMetric = Get-AzMetric -ResourceId $resourceId -MetricName "ConnectionCount" -TimeGrain 00:05:00 -StartTime (Get-Date).AddMinutes(-5) -AggregationType Maximum
+$maxConnectionCount = $connectionCountMetric.Timeseries.Data[0].Maximum
 
-    # Calculate the target unit count
-    $targetUnitCount = 1
-    foreach ($unitCount in $unitCounts) {
-        $unitCountConnections = $unitCount * $connectionsPerUnit
-        $unitCountConnectionsThreshold = $unitCountConnections * $scaleThreshold
-        if ($unitCountConnectionsThreshold -gt $maxConnectionCount -or $unitCount -eq $unitCounts[$unitCounts.Count - 1]) {
-            $targetUnitCount = $unitCount
-            Break
-        }
+# Calculate the target unit count
+$targetUnitCount = 1
+foreach ($unitCount in $unitCounts) {
+    $unitCountConnections = $unitCount * $connectionsPerUnit
+    $unitCountConnectionsThreshold = $unitCountConnections * $scaleThreshold
+    if ($unitCountConnectionsThreshold -gt $maxConnectionCount -or $unitCount -eq $unitCounts[$unitCounts.Count - 1]) {
+        $targetUnitCount = $unitCount
+        Break
     }
+}
 
-    # See if we need to change the unit count
-    if ($targetUnitCount -ne $currentUnitCount) {
+# See if we need to change the unit count
+if ($targetUnitCount -ne $currentUnitCount) {
 
-        Write-Host "Scaling resource to unit count: " $targetUnitCount
-                
-        # Change the resource unit count
-        $signalRResource.Sku.Capacity = $targetUnitCount
-        $signalRResource | Set-AzResource -Force
-        
-    } else {
-
-        Write-Host "Not scaling as resource is already at the optimum unit count: " $currentUnitCount
-
-    }
-
+    Write-Host "Scaling resource to unit count: " $targetUnitCount
+            
+    # Change the resource unit count
+    $signalRResource.Sku.Capacity = $targetUnitCount
+    $signalRResource | Set-AzResource -Force
+    
 } else {
 
-    Write-Host "Can't scale as resource is not on a scalable plan: " $signalRResource.Sku.Name
+    Write-Host "Not scaling as resource is already at the optimum unit count: " $currentUnitCount
 
 }
