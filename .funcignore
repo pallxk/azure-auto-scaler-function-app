@@ -6,5 +6,11 @@ node_modules
 package.json
 package-lock.json
 
+# Scripts
+scripts
+
 # VS Code
 .vscode
+
+# Zip
+*.zip

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"/..
+
+rm -rf app.zip
+
+7z a app.zip \
+  -x'@.funcignore' \
+  -x'!.funcignore' \
+  -x'!local.settings.json' \
+  -x'!.git*' \
+  .
