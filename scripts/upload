@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"/..
+
+container=$(terraform -chdir=terraform output -raw storage_container_id)
+
+#azcopy cp app.zip "$container"/app.zip
+az storage copy -s app.zip -d "$container"/app.zip

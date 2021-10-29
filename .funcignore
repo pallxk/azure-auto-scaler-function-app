@@ -9,6 +9,9 @@ package-lock.json
 # Scripts
 scripts
 
+# Terraform
+terraform
+
 # VS Code
 .vscode
 
