@@ -1,0 +1,10 @@
+# Azurite
+__*
+
+# Node.js
+node_modules
+package.json
+package-lock.json
+
+# VS Code
+.vscode
