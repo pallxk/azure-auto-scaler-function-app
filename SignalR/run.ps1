@@ -36,12 +36,13 @@ foreach ($unitCount in $unitCounts) {
 }
 
 # See if we need to change the unit count
-if ($targetUnitCount -ne $currentUnitCount) {
-    Write-Host "Scaling resource to unit count: " $targetUnitCount
-
-    # Change the resource unit count
-    $signalRResource.Sku.Capacity = $targetUnitCount
-    $signalRResource | Set-AzResource -Force
-} else {
+if ($targetUnitCount -eq $currentUnitCount) {
     Write-Host "Not scaling as resource is already at the optimum unit count: " $currentUnitCount
+    exit 0
 }
+
+Write-Host "Scaling resource to unit count: " $targetUnitCount
+
+# Change the resource unit count
+$signalRResource.Sku.Capacity = $targetUnitCount
+$signalRResource | Set-AzResource -Force
