@@ -3,6 +3,7 @@
 cd "$(dirname "$0")"/..
 
 container=$(terraform -chdir=terraform output -raw storage_container_id)
+version=$(git rev-list -1 @)
 
-#azcopy cp app.zip "$container"/app.zip
-az storage copy -s app.zip -d "$container"/app.zip
+#azcopy cp "$version.zip" "$container/$version.zip"
+az storage copy -s "$version.zip" -d "$container/$version.zip"

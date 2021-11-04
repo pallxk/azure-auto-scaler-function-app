@@ -2,9 +2,9 @@
 
 cd "$(dirname "$0")"/..
 
-rm -rf app.zip
+version=$(git rev-list -1 @)
 
-7z a app.zip \
+7z a "$version".zip \
   -x'@.funcignore' \
   -x'!.funcignore' \
   -x'!local.settings.json' \
