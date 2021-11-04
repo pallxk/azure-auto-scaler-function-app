@@ -11,8 +11,8 @@ $unitCounts = 1,2,5,10,20,50,100    # Supported SignalR Unit Counts
 $scaleThreshold = [double]($env:SignalRScaleThreshold ?? .95)  # Percentage threshold at which to scale
 
 # Get information about the current resource state
-$signalRResource = Get-AzResource -ResourceId $resourceId -Verbose
-$currentUnitCount = [int]$signalRResource.Sku.Capacity
+$signalRResource = Get-AzResource -ResourceId $resourceId
+$currentUnitCount = $signalRResource.Sku.Capacity
 
 # Only scale if we are not on the Free Plan
 if ($signalRResource.Sku.Name.StartsWith("Free_")) {
