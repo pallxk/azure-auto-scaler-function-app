@@ -4,6 +4,10 @@
     "SignalRResourceId": "",
     "SignalRScaleThreshold": ".95",
 
+    "SqlDatabaseResourceId": "",
+    "SqlDatabaseStorageScaleThreshold": ".95",
+    "SqlDatabaseStorageScaleStep": "10GB",
+
     "FUNCTIONS_WORKER_RUNTIME": "powershell",
     "FUNCTIONS_WORKER_RUNTIME_VERSION": "~7",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true"
