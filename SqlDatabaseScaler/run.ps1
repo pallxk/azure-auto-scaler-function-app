@@ -17,6 +17,11 @@ if ($sqlDatabaseResource.Sku.Tier -in @("Basic", "Hyperscale")) {
     exit 1
 }
 
+# Only scale if database is running
+if ($sqlDatabaseResource.pausedDate) {
+    Write-Host "Not scaling as SQL database is paused"
+}
+
 # Get metrics
 $storagePercentMetric = Get-AzMetric -ResourceId $resourceId -MetricName "storage_percent" -TimeGrain 0:05:00 -StartTime (Get-Date).AddMinutes(-5) -AggregationType Maximum
 $maxStoragePercent = $storagePercentMetric.Timeseries.Data[0].Maximum
