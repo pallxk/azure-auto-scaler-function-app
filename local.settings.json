@@ -1,6 +1,8 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "ResourceGroupName": "",
+
     "SignalRResourceId": "",
     "SignalRScaleThreshold": ".95",
 
